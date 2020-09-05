@@ -1,7 +1,7 @@
 # This program will generate traffic for ACME Fitness Shop App. It simulates both Authenticated and Guest user scenarios. You can run this program either from Command line or from
 # the web based UI. Refer to the "locust" documentation for further information. 
 
-from locust import HttpLocust, TaskSet, task, TaskSequence, seq_task, Locust
+from locust import HttpUser, TaskSet, task, SequentialTaskSet, Locust
 import random
 
 # List of users (pre-loaded into ACME Fitness shop)
@@ -13,7 +13,7 @@ products = []
 import logging
 
 # GuestUserBrowsing simulates traffic for a Guest User (Not logged in)
-class GuestUserBrowsing(TaskSequence):
+class GuestUserBrowsing(SequentialTaskSet):
 
     def on_start(self):
         self.getProducts()
@@ -39,12 +39,12 @@ class GuestUserBrowsing(TaskSequence):
         products.clear()
 
 # AuthUserBrowsing simulates traffic for Authenticated Users (Logged in)
-class AuthUserBrowsing(TaskSequence):
+class AuthUserBrowsing(SequentialTaskSet):
 
     def on_start(self):
         self.login()
     
-    @seq_task(1)
+    # @seq_task(1)
     @task(1)
     def login(self):
         user = random.choice(users)
@@ -52,13 +52,13 @@ class AuthUserBrowsing(TaskSequence):
         body = self.client.post("/login/", json={"username": user, "password":"vmware1!"}).json()
         self.locust.userid = body["token"]
 
-    @seq_task(2)
+    # @seq_task(2)
     @task(1)
     def getProducts(self):
         logging.info("Auth User - Get Catalog")
         self.client.get("/products")
 
-    @seq_task(3)
+    # @seq_task(3)
     @task(2)
     def getProduct(self):
         logging.info("Auth User - Get a product")
@@ -69,7 +69,7 @@ class AuthUserBrowsing(TaskSequence):
         products.clear()
 
     
-    @seq_task(4)
+    # @seq_task(4)
     @task(2)
     def addToCart(self):
         self.listCatalogItems()
@@ -85,7 +85,7 @@ class AuthUserBrowsing(TaskSequence):
         products.clear()
 
     
-    @seq_task(5)
+    # @seq_task(5)
     @task(1)
     def checkout(self):
         userCart = self.client.get("/cart/items/" + self.locust.userid).json()
@@ -130,7 +130,7 @@ class UserBehavior(TaskSet):
     tasks = {AuthUserBrowsing:2, GuestUserBrowsing:1}
 
 
-class WebSiteUser(HttpLocust):
+class WebSiteUser(HttpUser):
 
     task_set = UserBehavior
     userid = ""

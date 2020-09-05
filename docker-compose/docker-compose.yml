@@ -82,7 +82,7 @@ services:
       ports:
           - '6379:6379'
   cart:
-      image: gcr.io/vmwarecloudadvocacy/acmeshop-cart:1.3.1
+      image: gcr.io/vmwarecloudadvocacy/acmeshop-cart:latest
       hostname: cart
       restart: always
       environment:
@@ -100,7 +100,7 @@ services:
       depends_on:
           - redis-db
   front-end:
-       image: gcr.io/vmwarecloudadvocacy/acmeshop-front-end:2.2.0
+       image: gcr.io/vmwarecloudadvocacy/acmeshop-front-end:latest
        hostname: front-end
        restart: always
        ports:
@@ -140,7 +140,7 @@ services:
         - POSTGRES_USER=postgres
         - POSTGRES_DB=postgres
   order:
-      image: gcr.io/vmwarecloudadvocacy/order-postgres-tracing:3.0
+      image: gcr.io/vmwarecloudadvocacy/order-postgres-tracing:latest
       hostname: order
       restart: always
       ports:
@@ -162,7 +162,7 @@ services:
       depends_on:
         - postgres
   payment:
-       image: gcr.io/vmwarecloudadvocacy/acmeshop-payment:4.6
+       image: gcr.io/vmwarecloudadvocacy/acmeshop-payment:latest
        hostname: payment
        restart: always
        ports:
